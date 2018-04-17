@@ -55,27 +55,48 @@ public class TennisMatch {
         this.scores = scores;
     }
 
-    private int evalScore(String score) {
-        int playerOneScore = Integer.parseInt(score.substring(0, 0));
-        int playerTwoScore = Integer.parseInt(score.substring(2, 2));
-        return playerOneScore > playerTwoScore ? 1 : 0;
+    public static boolean isInteger(String string) {
+        boolean isValidInteger = false;
+        try {
+            Integer.parseInt(string);
+            isValidInteger = true;
+        } catch (NumberFormatException ex) {
+            // Not an integer
+        }
+
+        return isValidInteger;
+    }
+
+    private int evalScore(String setScore, int first, int last) {
+        if (last < first)
+            return -1;
+
+        if (isInteger(setScore)) {
+            if (first == last)
+                return Integer.parseInt(setScore);
+
+            int score = Integer.parseInt(setScore);
+            return score - evalScore(setScore, first + String.valueOf(score).length(), last);
+        }
+
+        return evalScore(setScore, ++first, last);
     }
 
     private int parseWins(String[] scoreArray, int first, int last){
-        if (last > first)
-            return -1;
+        if (last < first)
+            return Integer.MAX_VALUE;
 
         if (first == last)
-            return evalScore(scoreArray[first]);
+            return evalScore(scoreArray[first], 0, 2);
 
-        return evalScore(scoreArray[first]) + parseWins(scoreArray, ++first, last);
+        return evalScore(scoreArray[first], 0, 2) + parseWins(scoreArray, ++first, last);
     }
 
     public String getWinner() {
         String[] scoreArray = scores.split(",");
         int numMatches = scoreArray.length;
-        int playerOneWins = parseWins(scoreArray, 0, numMatches);
-        if (playerOneWins > (numMatches / 2))
+        boolean playerOneWins = parseWins(scoreArray, 0, numMatches) > 0;
+        if (playerOneWins)
             return playerOne;
         else
             return playerTwo;
