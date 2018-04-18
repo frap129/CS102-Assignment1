@@ -69,14 +69,14 @@ public class TennisMatch {
 
     private int evalScore(String setScore, int first, int last) {
         if (last < first)
-            return -1;
+            return Integer.MAX_VALUE;
 
         if (isInteger(setScore)) {
             if (first == last)
                 return Integer.parseInt(setScore);
 
             int score = Integer.parseInt(setScore);
-            return score - evalScore(setScore, first + String.valueOf(score).length(), last);
+            return score - evalScore(setScore, first + String.valueOf(score).length(), last) > 0 ? 1 : -1;
         }
 
         return evalScore(setScore, ++first, last);
@@ -95,10 +95,15 @@ public class TennisMatch {
     public String getWinner() {
         String[] scoreArray = scores.split(",");
         int numMatches = scoreArray.length;
-        boolean playerOneWins = parseWins(scoreArray, 0, numMatches) > 0;
-        if (playerOneWins)
+        int playerOneWins = parseWins(scoreArray, 0, numMatches);
+        if (playerOneWins > 0)
             return playerOne;
-        else
+        else if (playerOneWins < 0)
             return playerTwo;
+        else {
+            System.out.println("Warning: Match ended in a tie. Check your input file for errors.");
+            return "tie";
+        }
+
     }
 }
