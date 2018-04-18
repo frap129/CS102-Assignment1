@@ -55,7 +55,7 @@ public class TennisMatch {
         this.scores = scores;
     }
 
-    public static boolean isInteger(String string) {
+    private static boolean isInteger(String string) {
         boolean isValidInteger = false;
         try {
             Integer.parseInt(string);
