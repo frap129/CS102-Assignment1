@@ -1,13 +1,10 @@
 package maples.joe;
 
 public class TennisPlayer {
-    private String playerID;
-    private String firstName;
-    private String lastName;
-    private String year;
-    private String location;
+    private String playerID, firstName, lastName, location;
+    private int year;
 
-    public TennisPlayer(String playerID, String firstName, String lastName, String year, String location) {
+    public TennisPlayer(String playerID, String firstName, String lastName, int year, String location) {
         this.playerID = playerID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -39,11 +36,11 @@ public class TennisPlayer {
         this.lastName = lastName;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(int year) {
         this.year = year;
     }
 
