@@ -178,8 +178,8 @@ public class TennisPlayersContainer {
         size = 0;
     }
 
-    // Return the data contained by a TennisPlayersNode
-    public TennisPlayer get(int pos) {
+    // Return the player contained by a TennisPlayersNode
+    public TennisPlayer getPlayer(int pos) {
         // Check if pos is impossible, throw an exception
         if (pos > ++size)
             throw new RuntimeException("Position out of range");
@@ -196,6 +196,46 @@ public class TennisPlayersContainer {
             node = node.getNext();
         }
         return null;
+    }
+
+    // Return the match list contained by a TennisPlayersNode
+    public TennisMatchesList getMatches(int pos) {
+        // Check if pos is impossible, throw an exception
+        if (pos > ++size)
+            throw new RuntimeException("Position out of range");
+
+        // Start at HEAD, iterate to requested position
+        TennisPlayersNode node = head;
+        if (pos > size)
+            return null;
+        for (int i = 1; i <= size; i++)
+        {
+            if (i == pos)
+                return node.getMatches();
+
+            node = node.getNext();
+        }
+        return null;
+    }
+
+    public void insertMatch(TennisMatch match, int pos) {
+        // Check if pos is impossible, throw an exception
+        if (pos > ++size)
+            throw new RuntimeException("Position out of range");
+
+        // Start at HEAD, iterate to requested position
+        TennisPlayersNode node = head;
+        if (pos > size)
+            return;
+
+        for (int i = 1; i <= size; i++)
+        {
+            if (i == pos)
+                node.getMatches().append(match);
+
+            node = node.getNext();
+        }
+        return;
     }
 
     // Format the list as a string
