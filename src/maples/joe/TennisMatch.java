@@ -1,8 +1,9 @@
 package maples.joe;
 
-public class TennisMatch {
+public class TennisMatch implements TennisMatchInterface {
     private int dateYear, dateMonth, dateDay;
     private String player1Id, player2Id, tournament, scores, winner;
+    private TennisMatch next, prev;
 
     public TennisMatch(int dateYear, int dateMonth, int dateDay, String player1Id, String player2Id, String tournament, String scores) {
         this.dateYear = dateYear;
@@ -39,12 +40,28 @@ public class TennisMatch {
         return tournament;
     }
 
-    public String getScores() {
+    public String getScore() {
         return scores;
     }
 
     public String getWinner() {
         return winner;
+    }
+
+    public TennisMatch getNext() {
+        return next;
+    }
+
+    public void setNext(TennisMatch next) {
+        this.next = next;
+    }
+
+    public TennisMatch getPrev() {
+        return prev;
+    }
+
+    public void setPrev(TennisMatch prev) {
+        this.prev = prev;
     }
 
     private static boolean isInteger(String string) {
@@ -97,5 +114,34 @@ public class TennisMatch {
             return "tie";
         }
 
+    }
+
+    public String toString() {
+      // Add code here
+    }
+
+    public void print() {
+        System.out.print(toString());
+    }
+
+    public int compareTo(TennisMatch test) {
+        if (test.getDateDay() == dateDay &&
+                test.getDateMonth() == dateMonth &&
+                test.getDateYear() == dateYear &&
+                test.getPlayer1Id().equals(player1Id) &&
+                test.getPlayer2Id().equals(player2Id) &&
+                test.getScore().equals(scores) &&
+                test.getTournament().equals(tournament))
+            return 0;
+        else if ((test.getDateYear() > dateYear) ||
+                (test.getDateYear() >= dateYear && test.getDateMonth() > dateMonth) ||
+                (test.getDateYear() >= dateYear && test.getDateMonth() >= dateMonth && test.getDateDay() > dateDay))
+            return 1;
+        else if ((test.getDateYear() < dateYear) ||
+                (test.getDateYear() <= dateYear && test.getDateMonth() < dateMonth) ||
+                (test.getDateYear() <= dateYear && test.getDateMonth() <= dateMonth && test.getDateDay() < dateDay))
+            return -1;
+        else
+            return 1;
     }
 }

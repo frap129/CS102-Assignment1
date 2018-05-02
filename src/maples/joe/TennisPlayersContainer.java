@@ -1,8 +1,8 @@
 package maples.joe;
 
-public class TennisPlayersContainer {
-    private TennisPlayersNode head;
-    private TennisPlayersNode tail ;
+public class TennisPlayersContainer implements TennisPlayersContainerInterface{
+    private TennisPlayerNode head;
+    private TennisPlayerNode tail ;
     private int size;
 
     // Constructor for the list, requires no args
@@ -29,22 +29,22 @@ public class TennisPlayersContainer {
     public void prepend(TennisPlayer player)
     {
         // Create a new nude with the given data
-        TennisPlayersNode newTennisPlayersNode = new TennisPlayersNode(player, null, null);
+        TennisPlayerNode newTennisPlayerNode = new TennisPlayerNode(player, null, null);
 
         // If the list is empty, set to head and link circularly
         // else move to HEAD
         if (head == null)
         {
-            newTennisPlayersNode.setNext(newTennisPlayersNode);
-            newTennisPlayersNode.setPrev(newTennisPlayersNode);
-            head = newTennisPlayersNode;
+            newTennisPlayerNode.setNext(newTennisPlayerNode);
+            newTennisPlayerNode.setPrev(newTennisPlayerNode);
+            head = newTennisPlayerNode;
             tail = head;
         } else {
-            newTennisPlayersNode.setPrev(tail);
-            tail.setNext(newTennisPlayersNode);
-            head.setPrev(newTennisPlayersNode);
-            newTennisPlayersNode.setNext(head);
-            head = newTennisPlayersNode;
+            newTennisPlayerNode.setPrev(tail);
+            tail.setNext(newTennisPlayerNode);
+            head.setPrev(newTennisPlayerNode);
+            newTennisPlayerNode.setNext(head);
+            head = newTennisPlayerNode;
         }
 
         // Update size to reflect new addition
@@ -55,22 +55,22 @@ public class TennisPlayersContainer {
     public void append(TennisPlayer player)
     {
         // Create a new node with the given data
-        TennisPlayersNode newTennisPlayersNode = new TennisPlayersNode(player, null, null);
+        TennisPlayerNode newTennisPlayerNode = new TennisPlayerNode(player, null, null);
 
         // If the list is empty, set to head and link circularly
         // else move to tail
         if (head == null)
         {
-            newTennisPlayersNode.setNext(newTennisPlayersNode);
-            newTennisPlayersNode.setPrev(newTennisPlayersNode);
-            head = newTennisPlayersNode;
+            newTennisPlayerNode.setNext(newTennisPlayerNode);
+            newTennisPlayerNode.setPrev(newTennisPlayerNode);
+            head = newTennisPlayerNode;
             tail = head;
         } else {
-            newTennisPlayersNode.setPrev(tail);
-            tail.setNext(newTennisPlayersNode);
-            head.setPrev(newTennisPlayersNode);
-            newTennisPlayersNode.setNext(head);
-            tail = newTennisPlayersNode;
+            newTennisPlayerNode.setPrev(tail);
+            tail.setNext(newTennisPlayerNode);
+            head.setPrev(newTennisPlayerNode);
+            newTennisPlayerNode.setNext(head);
+            tail = newTennisPlayerNode;
         }
 
         // Update size to reflect new addition
@@ -78,42 +78,34 @@ public class TennisPlayersContainer {
     }
 
     // Insert item at the given position
-    public void insert(TennisPlayer player, int pos)
+    public void insertPlayer(TennisPlayer player)
     {
-        // Check if pos is impossible, throw an exception
-        if (pos > ++size)
-            throw new RuntimeException("Position out of range");
-
-        // Create a new nude with the given data
-        TennisPlayersNode newTennisPlayersNode = new TennisPlayersNode(player, null, null);
+        // Create a new node with the given data
+        TennisPlayerNode newTennisPlayerNode = new TennisPlayerNode(player, null, null);
 
         // If position is 1, prepend value
         // else, check if pos is new tail
-        if (pos == 1)
+        if (head.getPlayer().compareTo(player) > 0)
         {
             prepend(player);
             return;
-        } else if (pos == ++size) {
+        } else if (tail.getPlayer().compareTo(player) < 0) {
             append(player);
             return;
         }
 
         // Iterate to position starting at head
-        TennisPlayersNode node = head;
-        for (int i = 2; i <= size; i++)
-        {
-            // Once we find the correct position, insert the node
-            if (i == pos)
-            {
-                TennisPlayersNode tmp = node.getNext();
-                node.setNext(newTennisPlayersNode);
-                newTennisPlayersNode.setPrev(node);
-                newTennisPlayersNode.setNext(tmp);
-                tmp.setPrev(newTennisPlayersNode);
-            }
-
+        TennisPlayerNode node = head;
+        do {
             node = node.getNext();
         }
+        while (node.getPlayer().compareTo(player) < 0);
+
+        TennisPlayerNode tmp = node.getNext();
+        node.setNext(newTennisPlayerNode);
+        newTennisPlayerNode.setPrev(node);
+        newTennisPlayerNode.setNext(tmp);
+        tmp.setPrev(newTennisPlayerNode);
 
         // Update size to reflect new addition
         size++ ;
@@ -154,13 +146,13 @@ public class TennisPlayersContainer {
         }
 
         // Otherwise, find position and remove
-        TennisPlayersNode node = head.getNext();
+        TennisPlayerNode node = head.getNext();
         for (int i = 2; i <= size; i++)
         {
             if (i == pos)
             {
-                TennisPlayersNode prev = node.getPrev();
-                TennisPlayersNode next = node.getNext();
+                TennisPlayerNode prev = node.getPrev();
+                TennisPlayerNode next = node.getNext();
                 prev.setNext(next);
                 next.setPrev(prev);
                 size--;
@@ -178,34 +170,29 @@ public class TennisPlayersContainer {
         size = 0;
     }
 
-    // Return the player contained by a TennisPlayersNode
-    public TennisPlayer getPlayer(int pos) {
-        // Check if pos is impossible, throw an exception
-        if (pos > ++size)
-            throw new RuntimeException("Position out of range");
+    // Return the player contained by a TennisPlayerNode
+    public TennisPlayerNode getPlayer(String id) {
 
         // Start at HEAD, iterate to requested position
-        TennisPlayersNode node = head;
-        if (pos > size)
-            return null;
+        TennisPlayerNode node = head;
         for (int i = 1; i <= size; i++)
         {
-            if (i == pos)
-                return node.getPlayer();
+            if (id.equals(node.getPlayer().getId()))
+                return node;
 
             node = node.getNext();
         }
         return null;
     }
 
-    // Return the match list contained by a TennisPlayersNode
+    // Return the match list contained by a TennisPlayerNode
     public TennisMatchesList getMatches(int pos) {
         // Check if pos is impossible, throw an exception
         if (pos > ++size)
             throw new RuntimeException("Position out of range");
 
         // Start at HEAD, iterate to requested position
-        TennisPlayersNode node = head;
+        TennisPlayerNode node = head;
         if (pos > size)
             return null;
         for (int i = 1; i <= size; i++)
@@ -218,30 +205,14 @@ public class TennisPlayersContainer {
         return null;
     }
 
-    public void insertMatch(TennisMatch match, int pos) {
-        // Check if pos is impossible, throw an exception
-        if (pos > ++size)
-            throw new RuntimeException("Position out of range");
-
-        // Start at HEAD, iterate to requested position
-        TennisPlayersNode node = head;
-        if (pos > size)
-            return;
-
-        for (int i = 1; i <= size; i++)
-        {
-            if (i == pos)
-                node.getMatches().append(match);
-
-            node = node.getNext();
-        }
-        return;
+    public void insertMatch(TennisMatch match) {
+        // I'll do this later I promise
     }
 
     // Format the list as a string
     public String toString()
     {
-        TennisPlayersNode node = head;
+        TennisPlayerNode node = head;
 
         // Check if empty first
         if (size == 0)
@@ -258,5 +229,13 @@ public class TennisPlayersContainer {
         }
 
         return linkedList + "\n" + node.getNext() + "\n";
+    }
+
+    public void printAllPlayers(){
+        System.out.print(toString());
+    }
+
+    public void printMatchesOfPlayer(String id) {
+        getPlayer(id).printMatches();
     }
 }

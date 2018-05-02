@@ -1,8 +1,8 @@
 package maples.joe;
 
-public class TennisMatchesList {
-    private TennisMatchesNode head;
-    private TennisMatchesNode tail ;
+public class TennisMatchesList implements TennisMatchesListInterface {
+    private TennisMatch head;
+    private TennisMatch tail ;
     private int size;
 
     // Constructor for the list, requires no args
@@ -28,23 +28,20 @@ public class TennisMatchesList {
     // Insert a new item at HEAD
     public void prepend(TennisMatch match)
     {
-        // Create a new nude with the given data
-        TennisMatchesNode newTennisMatchesNode = new TennisMatchesNode(match, null, null);
-
         // If the list is empty, set to head and link circularly
         // else move to HEAD
         if (head == null)
         {
-            newTennisMatchesNode.setNext(newTennisMatchesNode);
-            newTennisMatchesNode.setPrev(newTennisMatchesNode);
-            head = newTennisMatchesNode;
+            match.setNext(match);
+            match.setPrev(match);
+            head = match;
             tail = head;
         } else {
-            newTennisMatchesNode.setPrev(tail);
-            tail.setNext(newTennisMatchesNode);
-            head.setPrev(newTennisMatchesNode);
-            newTennisMatchesNode.setNext(head);
-            head = newTennisMatchesNode;
+            match.setPrev(tail);
+            tail.setNext(match);
+            head.setPrev(match);
+            match.setNext(head);
+            head = match;
         }
 
         // Update size to reflect new addition
@@ -54,23 +51,20 @@ public class TennisMatchesList {
     // Insert a new item at tail
     public void append(TennisMatch match)
     {
-        // Create a new node with the given data
-        TennisMatchesNode newTennisMatchesNode = new TennisMatchesNode(match, null, null);
-
         // If the list is empty, set to head and link circularly
         // else move to tail
         if (head == null)
         {
-            newTennisMatchesNode.setNext(newTennisMatchesNode);
-            newTennisMatchesNode.setPrev(newTennisMatchesNode);
-            head = newTennisMatchesNode;
+            match.setNext(match);
+            match.setPrev(match);
+            head = match;
             tail = head;
         } else {
-            newTennisMatchesNode.setPrev(tail);
-            tail.setNext(newTennisMatchesNode);
-            head.setPrev(newTennisMatchesNode);
-            newTennisMatchesNode.setNext(head);
-            tail = newTennisMatchesNode;
+            match.setPrev(tail);
+            tail.setNext(match);
+            head.setPrev(match);
+            match.setNext(head);
+            tail = match;
         }
 
         // Update size to reflect new addition
@@ -78,42 +72,31 @@ public class TennisMatchesList {
     }
 
     // Insert item at the given position
-    public void insert(TennisMatch match, int pos)
+    public void insertMatch(TennisMatch match)
     {
-        // Check if pos is impossible, throw an exception
-        if (pos > ++size)
-            throw new RuntimeException("Position out of range");
-
-        // Create a new nude with the given data
-        TennisMatchesNode newTennisMatchesNode = new TennisMatchesNode(match, null, null);
-
         // If position is 1, prepend value
         // else, check if pos is new tail
-        if (pos == 1)
+        if (head.compareTo(match) == 1)
         {
             prepend(match);
             return;
-        } else if (pos == ++size) {
+        } else if (tail.compareTo(match) == -1) {
             append(match);
             return;
         }
 
         // Iterate to position starting at head
-        TennisMatchesNode node = head;
-        for (int i = 2; i <= size; i++)
-        {
-            // Once we find the correct position, insert the node
-            if (i == pos)
-            {
-                TennisMatchesNode tmp = node.getNext();
-                node.setNext(newTennisMatchesNode);
-                newTennisMatchesNode.setPrev(node);
-                newTennisMatchesNode.setNext(tmp);
-                tmp.setPrev(newTennisMatchesNode);
-            }
-
+        TennisMatch node = head;
+        do {
             node = node.getNext();
         }
+        while (node.compareTo(match) == -1);
+
+        TennisMatch tmp = node.getNext();
+        node.setNext(match);
+        match.setPrev(node);
+        match.setNext(tmp);
+        tmp.setPrev(match);
 
         // Update size to reflect new addition
         size++ ;
@@ -154,13 +137,13 @@ public class TennisMatchesList {
         }
 
         // Otherwise, find position and remove
-        TennisMatchesNode node = head.getNext();
+        TennisMatch node = head.getNext();
         for (int i = 2; i <= size; i++)
         {
             if (i == pos)
             {
-                TennisMatchesNode prev = node.getPrev();
-                TennisMatchesNode next = node.getNext();
+                TennisMatch prev = node.getPrev();
+                TennisMatch next = node.getNext();
                 prev.setNext(next);
                 next.setPrev(prev);
                 size--;
@@ -178,20 +161,20 @@ public class TennisMatchesList {
         size = 0;
     }
 
-    // Return the data contained by a TennisMatchesNode
+    // Return the data contained by a TennisMatch
     public TennisMatch get(int pos) {
         // Check if pos is impossible, throw an exception
         if (pos > ++size)
             throw new RuntimeException("Position out of range");
 
         // Start at HEAD, iterate to requested position
-        TennisMatchesNode node = head;
+        TennisMatch node = head;
         if (pos > size)
             return null;
         for (int i = 1; i <= size; i++)
         {
             if (i == pos)
-                return node.getMatch();
+                return node;
 
             node = node.getNext();
         }
@@ -199,24 +182,24 @@ public class TennisMatchesList {
     }
 
     // Format the list as a string
-    public String toString()
+    public void printMatches()
     {
-        TennisMatchesNode node = head;
+        TennisMatch node;
 
         // Check if empty first
         if (size == 0)
-            return "empty\n";
+            System.out.print("empty\n");
 
-        String linkedList = head.getMatch() + "\n";
+        String linkedList = head.toString() + "\n";
         node = head.getNext();
 
         // Iterate over all matches
         while (node.getNext() != head)
         {
-            linkedList += node.getMatch() + "\n";
+            linkedList += node.toString() + "\n";
             node = node.getNext();
         }
 
-        return linkedList + "\n" + node.getNext() + "\n";
+        System.out.print(linkedList + "\n" + node.getNext().toString() + "\n");
     }
 }

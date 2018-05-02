@@ -1,23 +1,23 @@
 package maples.joe;
 
-public class TennisPlayer {
-    private String playerID, firstName, lastName, location;
-    private int year;
+public class TennisPlayer implements TennisPlayerInterface {
+    private String Id, firstName, lastName, country;
+    private int birthYear;
 
-    public TennisPlayer(String playerID, String firstName, String lastName, int year, String location) {
-        this.playerID = playerID;
+    public TennisPlayer(String Id, String firstName, String lastName, int birthYear, String country) {
+        this.Id = Id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.year = year;
-        this.location = location;
+        this.birthYear = birthYear;
+        this.country = getCountry();
     }
 
-    public String getPlayerID() {
-        return playerID;
+    public String getId() {
+        return Id;
     }
 
-    public void setPlayerID(String playerID) {
-        this.playerID = playerID;
+    public void setId(String Id) {
+        this.Id = Id;
     }
 
     public String getFirstName() {
@@ -36,27 +36,35 @@ public class TennisPlayer {
         this.lastName = lastName;
     }
 
-    public int getYear() {
-        return year;
+    public int getBirthYear() {
+        return birthYear;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setBirthYear(int birthYear) {
+        this.birthYear = birthYear;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCountry() {
+        return country;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getWinLossRecord() {
         // needs other classes to be finished first
     }
 
-    public String print() {
-        // needs other classes to be finished first
+    public String toString(){
+        // Add code here
+    }
+
+    public void print() {
+        System.out.print(toString());
+    }
+
+    public int compareTo(TennisPlayer player) {
+        return Id.compareToIgnoreCase(player.getId());
     }
 }

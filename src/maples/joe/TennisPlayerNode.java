@@ -1,25 +1,25 @@
 package maples.joe;
 
-public class TennisPlayersNode {
+public class TennisPlayerNode implements TennisPlayerNodeInterface {
     private TennisPlayer player;
-    private TennisPlayersNode next, prev;
+    private TennisPlayerNode next, prev;
     private TennisMatchesList matches;
 
-    public TennisPlayersNode(TennisPlayer player, TennisMatchesList matches, TennisPlayersNode next, TennisPlayersNode prev) {
+    public TennisPlayerNode(TennisPlayer player, TennisMatchesList matches, TennisPlayerNode next, TennisPlayerNode prev) {
         this.player = player;
         this.matches = matches;
         this.next = next;
         this.prev = prev;
     }
 
-    public TennisPlayersNode(TennisPlayer player, TennisPlayersNode next, TennisPlayersNode prev) {
+    public TennisPlayerNode(TennisPlayer player, TennisPlayerNode next, TennisPlayerNode prev) {
         this.player = player;
         this.matches = null;
         this.next = next;
         this.prev = prev;
     }
 
-    public TennisPlayersNode(TennisMatchesList matches, TennisPlayersNode next, TennisPlayersNode prev) {
+    public TennisPlayerNode(TennisMatchesList matches, TennisPlayerNode next, TennisPlayerNode prev) {
         this.player = null;
         this.matches = matches;
         this.next = next;
@@ -34,19 +34,19 @@ public class TennisPlayersNode {
         this.player = player;
     }
 
-    public TennisPlayersNode getNext() {
+    public TennisPlayerNode getNext() {
         return next;
     }
 
-    public void setNext(TennisPlayersNode next) {
+    public void setNext(TennisPlayerNode next) {
         this.next = next;
     }
 
-    public TennisPlayersNode getPrev() {
+    public TennisPlayerNode getPrev() {
         return prev;
     }
 
-    public void setPrev(TennisPlayersNode prev) {
+    public void setPrev(TennisPlayerNode prev) {
         this.prev = prev;
     }
 
@@ -56,5 +56,13 @@ public class TennisPlayersNode {
 
     public void setMatches(TennisMatchesList matches) {
         this.matches = matches;
+    }
+
+    public void insertMatch(TennisMatch match) {
+        matches.insertMatch(match);
+    }
+
+    public void printMatches(){
+        matches.printMatches();
     }
 }
