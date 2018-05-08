@@ -14,7 +14,7 @@ public class TennisPlayerNode implements TennisPlayerNodeInterface {
 
     public TennisPlayerNode(TennisPlayer player, TennisPlayerNode next, TennisPlayerNode prev) {
         this.player = player;
-        this.matches = null;
+        this.matches = new TennisMatchesList();
         this.next = next;
         this.prev = prev;
     }
@@ -61,8 +61,17 @@ public class TennisPlayerNode implements TennisPlayerNodeInterface {
     public void insertMatch(TennisMatch match) {
         matches.insertMatch(match);
     }
+    
+    public String getWinLoss() {
+        return matches.getWinLoss(player.getId());
+    }
 
     public void printMatches(){
+        if (matches != null)
         matches.printMatches();
+    }
+    
+    public void getWinLoss(String playerId) {
+        matches.getWinLoss(playerId);
     }
 }

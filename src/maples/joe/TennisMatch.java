@@ -3,7 +3,7 @@ package maples.joe;
 public class TennisMatch implements TennisMatchInterface {
     private int dateYear, dateMonth, dateDay;
     private String player1Id, player2Id, tournament, scores, winner;
-    private TennisMatch next, prev;
+
 
     public TennisMatch(int dateYear, int dateMonth, int dateDay, String player1Id, String player2Id, String tournament, String scores) {
         this.dateYear = dateYear;
@@ -48,25 +48,10 @@ public class TennisMatch implements TennisMatchInterface {
         return winner;
     }
 
-    public TennisMatch getNext() {
-        return next;
-    }
-
-    public void setNext(TennisMatch next) {
-        this.next = next;
-    }
-
-    public TennisMatch getPrev() {
-        return prev;
-    }
-
-    public void setPrev(TennisMatch prev) {
-        this.prev = prev;
-    }
-
     private static boolean isInteger(String string) {
         boolean isValidInteger = false;
         try {
+            // Exploit an exception to judge if a string is an int
             Integer.parseInt(string);
             isValidInteger = true;
         } catch (NumberFormatException ex) {
@@ -77,34 +62,48 @@ public class TennisMatch implements TennisMatchInterface {
     }
 
     private int evalSets(String setScore, int first, int last) {
+        // last cannot be less than first
+        // Return a big number to show somethng is wrong
         if (last < first)
             return Integer.MAX_VALUE;
 
-        if (isInteger(setScore)) {
+        // Use isInteger(int) to ignore the "-" in the score
+        if (isInteger(Character.toString(setScore.charAt(first)))) {
+            // If first == last, we have reached the max depth of recursion
             if (first == last)
-                return Integer.parseInt(setScore);
-
-            int score = Integer.parseInt(setScore);
-            return score - evalSets(setScore, first + String.valueOf(score).length(), last) > 0 ? 1 : -1;
+                return Integer.parseInt(Character.toString(setScore.charAt(first)));
+            
+            // Parse 1 char each time we recurse, branch to read next char
+            int score = Integer.parseInt(Character.toString(setScore.charAt(first)));
+            return score - evalSets(setScore, ++first, last);
         }
-
+        
+        // If the char at first is not an integer, skip it
         return evalSets(setScore, ++first, last);
     }
 
     private int parseGame(String[] scoreArray, int first, int last){
+        // last cannot be less than first
+        // Return a big number to show somethng is wrong
         if (last < first)
             return Integer.MAX_VALUE;
 
+        // If first == last, we have reached the max depth of recursion
         if (first == last)
-            return evalSets(scoreArray[first], 0, 2);
+            return evalSets(scoreArray[first], 0, 2) > 0 ? 1 : -1;
 
-        return evalSets(scoreArray[first], 0, 2) + parseGame(scoreArray, ++first, last);
+        // Parse 1 set each time we recurse, and branch until all sets are parsed
+        return (evalSets(scoreArray[first], 0, 2) > 0 ? 1 : -1) + parseGame(scoreArray, ++first, last);
     }
 
     public String determineWinner() {
+        // Split scores into array
         String[] scoreArray = scores.split(",");
+        
         int numMatches = scoreArray.length;
-        int playerOneWins = parseGame(scoreArray, 0, numMatches);
+        int playerOneWins = parseGame(scoreArray, 0, --numMatches);
+        
+        // Return winner ID
         if (playerOneWins > 0)
             return player1Id;
         else if (playerOneWins < 0)
@@ -117,14 +116,17 @@ public class TennisMatch implements TennisMatchInterface {
     }
 
     public String toString() {
-      // Add code here
+      String match = dateYear + "/" + dateMonth + "/" + dateDay + ", " + player1Id + "-" + player2Id + ", "
+              + tournament + ", " + scores;
+      return match;
     }
 
     public void print() {
-        System.out.print(toString());
+        System.out.println(toString());
     }
 
     public int compareTo(TennisMatch test) {
+        // Compare all data, prioritizing date
         if (test.getDateDay() == dateDay &&
                 test.getDateMonth() == dateMonth &&
                 test.getDateYear() == dateYear &&

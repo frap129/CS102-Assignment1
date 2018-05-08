@@ -31,21 +31,11 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
         // Create a new nude with the given data
         TennisPlayerNode newTennisPlayerNode = new TennisPlayerNode(player, null, null);
 
-        // If the list is empty, set to head and link circularly
-        // else move to HEAD
-        if (head == null)
-        {
-            newTennisPlayerNode.setNext(newTennisPlayerNode);
-            newTennisPlayerNode.setPrev(newTennisPlayerNode);
-            head = newTennisPlayerNode;
-            tail = head;
-        } else {
-            newTennisPlayerNode.setPrev(tail);
-            tail.setNext(newTennisPlayerNode);
-            head.setPrev(newTennisPlayerNode);
-            newTennisPlayerNode.setNext(head);
-            head = newTennisPlayerNode;
-        }
+        newTennisPlayerNode.setPrev(tail);
+        tail.setNext(newTennisPlayerNode);
+        head.setPrev(newTennisPlayerNode);
+        newTennisPlayerNode.setNext(head);
+        head = newTennisPlayerNode;
 
         // Update size to reflect new addition
         size++ ;
@@ -57,21 +47,11 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
         // Create a new node with the given data
         TennisPlayerNode newTennisPlayerNode = new TennisPlayerNode(player, null, null);
 
-        // If the list is empty, set to head and link circularly
-        // else move to tail
-        if (head == null)
-        {
-            newTennisPlayerNode.setNext(newTennisPlayerNode);
-            newTennisPlayerNode.setPrev(newTennisPlayerNode);
-            head = newTennisPlayerNode;
-            tail = head;
-        } else {
-            newTennisPlayerNode.setPrev(tail);
-            tail.setNext(newTennisPlayerNode);
-            head.setPrev(newTennisPlayerNode);
-            newTennisPlayerNode.setNext(head);
-            tail = newTennisPlayerNode;
-        }
+        newTennisPlayerNode.setPrev(tail);
+        tail.setNext(newTennisPlayerNode);
+        head.setPrev(newTennisPlayerNode);
+        newTennisPlayerNode.setNext(head);
+        tail = newTennisPlayerNode;
 
         // Update size to reflect new addition
         size++;
@@ -80,35 +60,33 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
     // Insert item at the given position
     public void insertPlayer(TennisPlayer player)
     {
-        // Create a new node with the given data
-        TennisPlayerNode newTennisPlayerNode = new TennisPlayerNode(player, null, null);
-
-        // If position is 1, prepend value
-        // else, check if pos is new tail
-        if (head.getPlayer().compareTo(player) > 0)
-        {
-            prepend(player);
-            return;
-        } else if (tail.getPlayer().compareTo(player) < 0) {
-            append(player);
-            return;
+        TennisPlayerNode newNode = new TennisPlayerNode(player, null, null);
+        if (this.size == 0) {
+            this.head = newNode;
+            this.head.setPrev(this.head);
+            this.head.setNext(this.head);
+            this.size++;
+        } else {
+            TennisPlayerNode curr = this.head;
+            int i = 0;
+            while ((i < this.size) && (player.compareTo(curr.getPlayer()) > 0)) {
+                curr = curr.getNext();
+                i++;
+            }
+            if (player.compareTo(curr.getPlayer()) == 0){
+               throw new TennisDatabaseRuntimeException("You cannot enter a duplicate player.");
+            }
+            else{
+            if (i == 0){
+                this.head = newNode;
+            }
+            newNode.setNext(curr);
+            newNode.setPrev(curr.getPrev());
+            curr.getPrev().setNext(newNode);
+            curr.setPrev(newNode);
+            this.size++;
+            }
         }
-
-        // Iterate to position starting at head
-        TennisPlayerNode node = head;
-        do {
-            node = node.getNext();
-        }
-        while (node.getPlayer().compareTo(player) < 0);
-
-        TennisPlayerNode tmp = node.getNext();
-        node.setNext(newTennisPlayerNode);
-        newTennisPlayerNode.setPrev(node);
-        newTennisPlayerNode.setNext(tmp);
-        tmp.setPrev(newTennisPlayerNode);
-
-        // Update size to reflect new addition
-        size++ ;
     }
 
     // Remove item at the given position
@@ -175,12 +153,15 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
 
         // Start at HEAD, iterate to requested position
         TennisPlayerNode node = head;
-        for (int i = 1; i <= size; i++)
+        if (id.toUpperCase().equals(node.getPlayer().getId().toUpperCase()))
+            return node;
+        
+        while (node.getNext() != head)
         {
-            if (id.equals(node.getPlayer().getId()))
-                return node;
-
             node = node.getNext();
+            
+            if (id.toUpperCase().equals(node.getPlayer().getId().toUpperCase()))
+                return node;
         }
         return null;
     }
@@ -205,8 +186,15 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
         return null;
     }
 
-    public void insertMatch(TennisMatch match) {
-        // I'll do this later I promise
+    public void insertMatch(TennisMatch match) throws NullPointerException {
+        try {
+            TennisPlayerNode player1 = getPlayer(match.getPlayer1Id());
+            TennisPlayerNode player2 = getPlayer(match.getPlayer2Id());
+            player1.getMatches().insertMatch(match);
+            player2.getMatches().insertMatch(match);
+        } catch(NullPointerException e) {
+            System.out.println("Warning: One or more of the specified players do not exist. Discarding match.");
+        }
     }
 
     // Format the list as a string
@@ -218,17 +206,18 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
         if (size == 0)
             return "empty\n";
 
-        String linkedList = head.getPlayer() + "\n";
-        node = head.getNext();
+        String linkedList = node.getPlayer().toString() + ", " 
+                    + node.getWinLoss() + "\n";
 
         // Iterate over all players
         while (node.getNext() != head)
         {
-            linkedList += node.getPlayer() + "\n";
             node = node.getNext();
+            linkedList += node.getPlayer().toString() + ", " 
+                    + node.getWinLoss() + "\n";
         }
 
-        return linkedList + "\n" + node.getNext() + "\n";
+        return linkedList + "\n";
     }
 
     public void printAllPlayers(){
@@ -236,6 +225,10 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
     }
 
     public void printMatchesOfPlayer(String id) {
-        getPlayer(id).printMatches();
+        TennisPlayerNode player = getPlayer(id);
+        if (player != null)
+            player.printMatches();
+        else
+            System.out.println("Error: No such player");
     }
 }

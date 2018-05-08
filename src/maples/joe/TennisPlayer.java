@@ -1,23 +1,23 @@
 package maples.joe;
 
 public class TennisPlayer implements TennisPlayerInterface {
-    private String Id, firstName, lastName, country;
+    private String id, firstName, lastName, country;
     private int birthYear;
 
-    public TennisPlayer(String Id, String firstName, String lastName, int birthYear, String country) {
-        this.Id = Id;
+    public TennisPlayer(String id, String firstName, String lastName, int birthYear, String country) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthYear = birthYear;
-        this.country = getCountry();
+        this.country = country;
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
-    public void setId(String Id) {
-        this.Id = Id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -52,12 +52,9 @@ public class TennisPlayer implements TennisPlayerInterface {
         this.country = country;
     }
 
-    public String getWinLossRecord() {
-        // needs other classes to be finished first
-    }
-
     public String toString(){
-        // Add code here
+        String player = id + ": " + firstName + " " + lastName + ", " + birthYear;
+        return player;
     }
 
     public void print() {
@@ -65,6 +62,15 @@ public class TennisPlayer implements TennisPlayerInterface {
     }
 
     public int compareTo(TennisPlayer player) {
-        return Id.compareToIgnoreCase(player.getId());
+        String player2 = player.getId();
+        
+        // Simply filter results from String's compareToIgnoreCase
+        if ((this.id.compareToIgnoreCase(player2)) > 0) // ID comes after player
+            return 1;
+        else if ((this.id.compareToIgnoreCase(player2)) == 0) //ID == player
+            return 0;
+        else if ((this.id.compareToIgnoreCase(player2)) < 0 )// ID come before player
+            return -1;
+        return 1;
     }
 }
