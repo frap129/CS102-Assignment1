@@ -1,3 +1,7 @@
+/*
+ * Author: Joseph Maples
+ * CS102 Assignment 1
+ */
 package maples.joe;
 
 public class TennisPlayersContainer implements TennisPlayersContainerInterface{
@@ -74,7 +78,7 @@ public class TennisPlayersContainer implements TennisPlayersContainerInterface{
                 i++;
             }
             if (player.compareTo(curr.getPlayer()) == 0){
-               throw new TennisDatabaseRuntimeException("You cannot enter a duplicate player.");
+               throw new TennisDatabaseRuntimeException("Warning: Duplicate player. Ignoring.");
             }
             else{
             if (i == 0){

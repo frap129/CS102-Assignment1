@@ -1,3 +1,7 @@
+/*
+ * Author: Joseph Maples
+ * CS102 Assignment 1
+ */
 package maples.joe;
 
 public class TennisPlayer implements TennisPlayerInterface {
